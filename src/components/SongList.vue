@@ -6,9 +6,9 @@
         :key="index"
         :data-first-letter="s.name.charAt(0)"
       >
-        <button @click="$emit('song-select', s.id)">
+        <button @click="$emit('song-select', [s.id, s.name, s.artist])">
           <span>{{ s.name }}</span>
-          <span>{{ index + 1 }} ({{ s.artist }})</span>
+          <span>{{ s.artist }}</span>
         </button>
       </li>
     </ul>
@@ -51,55 +51,35 @@ body {
   font-family: sans-serif;
   font-weight: 400;
 }
-.index {
-  background: white;
-  h1 {
-    padding: 30px 20px;
-  }
-}
-.random {
-  padding: 10px 20px;
-  margin: 0 0 40px 20px;
-  font-size: 1em;
-}
 ul {
   list-style-type: none;
   margin: 0;
-  padding: 0;
+  padding: 20px 0 0 20px;
 }
 li {
   margin: 0;
-  padding: 0 10px;
-  border-bottom: 1px solid #eee;
+  padding: 0 0 10px 0;
   display: flex;
-  &:nth-child(odd) {
-    background: rgba(0, 0, 0, 0.02);
-  }
-  &:last-child {
-    padding: 200px 0 20px 20px;
-    & > button {
-      padding: 15px 30px;
-    }
-  }
   & > button {
     display: block;
-    padding: 10px;
+    padding: 20px;
     text-decoration: none;
-    color: #333;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    text-align: left;
+    border-radius: 10px;
+    cursor: pointer;
     &:first-child {
       flex: 1 1 auto;
     }
     & > span {
       &:nth-child(1) {
         display: block;
-        font-weight: bold;
-        font-size: 1.5em;
+        font-size: 2em;
+        margin-bottom: 10px;
       }
       &:nth-child(2) {
         opacity: 0.5;
-      }
-      &.nota {
-        color: red;
       }
     }
   }
@@ -110,8 +90,9 @@ li {
   width: 25%;
   top: 0;
   right: 0;
-  background: #222;
   overflow: auto;
+  padding: 20px;
+  background: #010223;
   & > button {
     display: inline-block;
     text-transform: uppercase;
@@ -120,11 +101,10 @@ li {
     line-height: 1em;
     width: 50%;
     padding: 22px 0;
-    &.switchscope {
-      width: 100%;
-      border: purple 2px solid;
-      font-size: 1em;
-    }
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    cursor: pointer;
   }
   @media screen and (min-width: 768px) {
     width: 20%;

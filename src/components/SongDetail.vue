@@ -3,12 +3,10 @@
     <button
       class="close"
       @click="$emit('close-song')"
-    >
-      close
-    </button>
+    />
     <div ref="lyrics" class="lyrics" :style="{ fontSize: `${fontSizeUser}em` }">
       <div
-        v-for="(lyric, index) in songLyrics"
+        v-for="(lyric, index) in songData.lyrics"
         :key="index"
         class="lyric"
         :data-type="lyric.type"
@@ -17,9 +15,10 @@
       </div>
     </div>
     <div class="tools">
-      <button class="toolsButton" @click="fontSize(true)">+</button>
       <button class="toolsButton" @click="fontSize(false)">-</button>
+      <button class="toolsButton" @click="fontSize(true)">+</button>
     </div>
+    <div class="meta">{{ songData.name }} - {{ songData.artist }}</div>
   </div>
 </template>
 
@@ -27,9 +26,7 @@
 
 export default {
   props: {
-    songName: String,
-    songArtist: String,
-    songLyrics: Array,
+    songData: Array,
   },
   data() {
     return {
@@ -67,19 +64,60 @@ export default {
   z-index: 100;
   top: 0;
   left: 0;
-  background: black;
+  background: #010223;
   overflow-x: scroll;
   color: white;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 .close {
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  z-index: 99;
+  font-weight: bold;
+  border: none;
+  &::before {
+    content: '<';
+  }
+}
+.tools {
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+  z-index: 99;
+  cursor: pointer;
+  &Button {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 20px;
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+  }
+}
+.meta {
+  position: fixed;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 50%;
+  color: white;
+  opacity: 0.5;
 }
 .lyrics {
   position: relative;
   top: 30px;
-  height: calc(100% - 40px);
+  height: calc(100% - 100px);
   width: 10000px;
   padding: 0 50px;
   overflow: hidden;
@@ -96,16 +134,15 @@ export default {
   padding: 0 80px 0.8em 0;
   line-height: 1.5em;
   color: white;
-  
   &[data-type='instru'] {
     font-family: 'Courier';
     font-style: italic;
-    margin-bottom: 0.8em;
     position: relative;
-    background-color: blue;
-    background-size: calc(100% - 80px) 100%;
+    overflow: hidden;
+    height: 4em;
+    margin-bottom: 0.8em;
     &::before {
-      content: '🎸';
+      content: '🎸🎸🎸🎸🎸🎸🎸🎸🎸🎸🎸🎸🎸🎸🎸🎸🎸🎸';
       font-size: 2em;
     }
     &::after {
@@ -113,7 +150,7 @@ export default {
       display: block;
       width: 80px;
       height: 100%;
-      background: black;
+      background: #010223;
       top: 0;
       right: 0;
       position: absolute;
@@ -122,20 +159,8 @@ export default {
   &[data-type='refrain'] {
     color: yellow;
   }
-}
-.tools {
-  position: fixed;
-  right: 10px;
-  bottom: 10px;
-  width: 40px;
-  &Button {
-    background: rgba(255, 255, 0, 0.2);
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    font-size: 20px;
-    width: 100%;
-    height: 40px;
-    margin-top: 10px;
+  &[data-type='italic'] {
+    font-style: italic;
   }
 }
 </style>

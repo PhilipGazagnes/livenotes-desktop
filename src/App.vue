@@ -1,10 +1,9 @@
 <template>
   <SongDetail
-    v-if="songLyrics"
-    :song-lyrics="songLyrics"
+    v-if="songData"
+    :song-data="songData"
     @close-song="handleCloseSong"
   />
-  {{ songLyrics }}
   <SongList
     :song-list="$options.listData"
     @song-select="handleSongSelect"
@@ -26,7 +25,7 @@ export default {
   },
   data() {
     return {
-      songLyrics: null,
+      songData: null,
     };
   },
   methods: {
@@ -42,32 +41,38 @@ export default {
         if (section.lyrics) {
           section.lyrics.forEach(lyric => {
             if (lyric.includes('***')) {
+              if (acc.length && acc[acc.length - 1].type !== 'instru') {
+                acc.push({
+                  type: 'instru',
+                  lyric: '',
+                });
+              }
+            } else if (lyric.includes('+++')) {
               acc.push({
-                type: 'instru',
-                lyric: lyric.replaceAll('*', ''),
+                type: 'italic',
+                lyric: lyric.replaceAll('+', ''),
               });
             } else {
               acc.push({
-                type: section.name === 'Refrain' ? 'refrain' : '',
+                type: section.name.split('!')[0].toLowerCase(),
                 lyric,
               });
             }
           })
         }
-        // if (acc.length) {
-        //   acc.push({
-        //     type: 'break',
-        //   });
-        // }
         return acc;
       }, []);
     },
-    handleSongSelect(id) {
+    handleSongSelect(payload) { // [id, name, artist]
       this.freezeBody();
-      this.songLyrics = this.flattenLyrics(this.$options.songsData[id].sections);
+      this.songData = {
+        lyrics: this.flattenLyrics(this.$options.songsData[payload[0]].sections),
+        name: payload[1],
+        artist: payload[2],
+      };
     },
     handleCloseSong() {
-      this.songLyrics = null;
+      this.songData = null;
       this.unfreezeBody();
     },
   },
@@ -99,5 +104,6 @@ body {
   padding: 0;
   margin: 0;
   font-family: sans-serif;
+  background: #010223;
 }
 </style>
