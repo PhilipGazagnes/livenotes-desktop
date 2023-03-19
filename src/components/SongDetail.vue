@@ -1,14 +1,32 @@
 <template>
-  <div class="song">
+  <div
+    class="song"
+    id="song"
+  >
     <button
       class="close"
-      @click="$emit('close-song')"
+      @click="handleClose"
     />
-    <div ref="lyrics" class="lyrics" :style="{ fontSize: `${fontSizeUser}em` }">
+    <button
+      class="toggleMode"
+      @click="handleToggleMode"
+    >=</button>
+    <button
+      v-if="displayMode === 'vertical'"
+      class="autoscroll"
+      @click="handleAutoScroll"
+    >{{ autoScrollSpeed }}</button>
+    
+    <div
+      class="lyrics"
+      :data-display-mode="displayMode"
+      :style="{ fontSize: `${fontSizeUser}em` }"
+    >
       <div
         v-for="(lyric, index) in songData.lyrics"
         :key="index"
         class="lyric"
+        :data-display-mode="displayMode"
         :data-type="lyric.type"
       >
         {{ lyric.lyric }}
@@ -31,6 +49,9 @@ export default {
   data() {
     return {
       fontSizeUser: 2,
+      displayMode: 'vertical', // or 'horizontal'
+      autoScrollSpeed: 0,
+      autoScrollTimer: null,
     };
   },
   methods: {
@@ -52,6 +73,30 @@ export default {
     fontSize(increase) {
       this.fontSizeUser += 0.1 * (increase ? 1 : -1);
     },
+    handleToggleMode() {
+      clearInterval(this.autoScrollTimer);
+      this.autoScrollSpeed = 0;
+      this.displayMode = this.displayMode === 'horizontal' ? 'vertical' : 'horizontal';
+    },
+    scrollDown() {
+      document.getElementById('song').scrollTop = document.getElementById('song').scrollTop + 1;
+    },
+    handleAutoScroll() {
+      clearInterval(this.autoScrollTimer);
+      this.autoScrollSpeed = this.autoScrollSpeed < 3 ? this.autoScrollSpeed + 1 : 0;
+      if(this.autoScrollSpeed) {
+        this.autoScrollTimer = setInterval(() => {
+          requestAnimationFrame(this.scrollDown);
+        }, [50, 25, 15][this.autoScrollSpeed - 1]);
+      } else {
+        clearInterval(this.autoScrollTimer);
+      }
+    },
+    handleClose() {
+      clearInterval(this.autoScrollTimer);
+      this.autoScrollSpeed = 0;
+      this.$emit('close-song');
+    }
   },
 };
 </script>
@@ -70,14 +115,26 @@ export default {
   &::-webkit-scrollbar {
     display: none;
   }
+  &::after {
+    content: '';
+    display: block;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 120px;
+    background: #010223;
+    background: linear-gradient(0deg, rgba(1,2,35,1) 70%, rgba(1,2,35,0) 100%);
+    z-index: 0;
+  }
 }
 .close {
   position: fixed;
   bottom: 10px;
   left: 10px;
-  width: 50px;
+  width: 80px;
   height: 50px;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
   color: white;
   border-radius: 10px;
   cursor: pointer;
@@ -88,6 +145,34 @@ export default {
     content: '<';
   }
 }
+.toggleMode {
+  position: fixed;
+  bottom: 10px;
+  left: 100px;
+  width: 80px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  z-index: 99;
+  font-weight: bold;
+  border: none;
+}
+.autoscroll {
+  position: fixed;
+  bottom: 10px;
+  left: 190px;
+  width: 80px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  z-index: 99;
+  font-weight: bold;
+  border: none;
+}
 .tools {
   position: fixed;
   right: 10px;
@@ -95,12 +180,12 @@ export default {
   z-index: 99;
   cursor: pointer;
   &Button {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
     color: white;
     border: none;
     border-radius: 10px;
     font-size: 20px;
-    width: 50px;
+    width: 80px;
     height: 50px;
     margin-right: 10px;
   }
@@ -113,47 +198,68 @@ export default {
   max-width: 50%;
   color: white;
   opacity: 0.5;
+  z-index: 99;
 }
 .lyrics {
-  position: relative;
-  top: 30px;
-  height: calc(100% - 100px);
-  width: 10000px;
-  padding: 0 50px;
-  overflow: hidden;
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  align-content: flex-start;
+  &[data-display-mode='horizontal'] {
+    position: relative;
+    top: 30px;
+    height: calc(100% - 100px);
+    width: 10000px;
+    padding: 0 50px;
+    overflow: hidden;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
+  }
+  &[data-display-mode='vertical'] {
+    text-align: center;
+    padding: 300px 0 200px 0;
+  }
 }
 .lyric {
-  width: 500px;
   font-weight: bold;
-  padding: 0 80px 0.8em 0;
   line-height: 1.5em;
   color: white;
-  &[data-type='instru'] {
-    font-family: 'Courier';
-    font-style: italic;
-    position: relative;
-    overflow: hidden;
-    height: 4em;
-    margin-bottom: 0.8em;
-    &::before {
-      content: '🎸🎸🎸🎸🎸🎸🎸🎸🎸🎸🎸🎸🎸🎸🎸🎸🎸🎸';
-      font-size: 2em;
+  &[data-display-mode='horizontal'] {
+    width: 500px;
+    padding: 0 80px 0.8em 0;
+    &[data-type='instru'] {
+      position: relative;
+      overflow: hidden;
+      height: 4em;
+      margin-bottom: 0.8em;
+      &::before {
+        content: '🎸🎸🎸🎸🎸🎸🎸🎸🎸🎸🎸🎸🎸🎸🎸🎸🎸🎸';
+        font-size: 2em;
+      }
+      &::after {
+        content: '';
+        display: block;
+        width: 80px;
+        height: 100%;
+        background: #010223;
+        top: 0;
+        right: 0;
+        position: absolute;
+      }
     }
-    &::after {
-      content: '';
-      display: block;
-      width: 80px;
-      height: 100%;
-      background: #010223;
-      top: 0;
-      right: 0;
-      position: absolute;
+  }
+  &[data-display-mode='vertical'] {
+    padding: 10px 0;
+    &[data-type='instru'] {
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 0.8em;
+      margin-top: 0.8em;
+      &::before {
+        content: '🎸🎸🎸🎸🎸🎸🎸';
+        margin-top: 0.8em;
+        font-size: 2em;
+      }
     }
   }
   &[data-type='refrain'] {

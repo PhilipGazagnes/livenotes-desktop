@@ -20,6 +20,7 @@
       >
         {{ l }}
       </button>
+      <button @click="$emit('wait')">...</button>
     </div>
   </div>
 </template>
@@ -54,7 +55,7 @@ body {
 ul {
   list-style-type: none;
   margin: 0;
-  padding: 20px 0 0 20px;
+  padding: 20px calc(25% + 40px) 0 20px;
 }
 li {
   margin: 0;
@@ -69,6 +70,7 @@ li {
     text-align: left;
     border-radius: 10px;
     cursor: pointer;
+    border: none;
     &:first-child {
       flex: 1 1 auto;
     }
@@ -77,6 +79,7 @@ li {
         display: block;
         font-size: 2em;
         margin-bottom: 10px;
+        font-weight: bold;
       }
       &:nth-child(2) {
         opacity: 0.5;
@@ -99,19 +102,12 @@ li {
     font-weight: bold;
     font-size: 1.5em;
     line-height: 1em;
-    width: 50%;
-    padding: 22px 0;
+    width: 33.33%;
+    padding: 16px 0;
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
     cursor: pointer;
-  }
-  @media screen and (min-width: 768px) {
-    width: 20%;
-    button {
-      width: 33.33%;
-      padding: 16px 0;
-    }
   }
 }
 </style>

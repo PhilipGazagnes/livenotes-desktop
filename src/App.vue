@@ -7,25 +7,34 @@
   <SongList
     :song-list="$options.listData"
     @song-select="handleSongSelect"
+    @wait="handleWait(true)"
+  />
+  <WaitScreen
+    v-if="waitScreen"
+    @click="handleWait(false)"
   />
 </template>
 
 <script>
 import songsDataJson from './data/data.json';
 import listDataJson from './data/index.json';
+
 import SongList from './components/SongList.vue';
 import SongDetail from './components/SongDetail.vue';
+import WaitScreen from './components/WaitScreen.vue';
 
 export default {
   songsData: songsDataJson,
-  listData: listDataJson.sort(compare), 
+  listData: listDataJson.filter(s => s.scope.includes('funlive')).sort(compare), 
   components: {
     SongList,
     SongDetail,
+    WaitScreen,
   },
   data() {
     return {
       songData: null,
+      waitScreen: true,
     };
   },
   methods: {
@@ -74,6 +83,10 @@ export default {
     handleCloseSong() {
       this.songData = null;
       this.unfreezeBody();
+    },
+    handleWait(param) {
+      this.waitScreen = param;
+      document.body.style.overflow = param ? 'hidden' : 'auto';
     },
   },
 };
