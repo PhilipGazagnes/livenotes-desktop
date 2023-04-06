@@ -4,6 +4,7 @@
     @click="$emit('click')"
   >
     <img class="logo" src="../assets/logo-fun-live.svg">
+    <div class="website">www.fun-live.fr</div>
   </div>
 </template>
 
@@ -18,8 +19,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
 }
 .logo {
   width: 60%;
+}
+.website {
+  color: white;
+  font-size: 6em;
 }
 </style>
