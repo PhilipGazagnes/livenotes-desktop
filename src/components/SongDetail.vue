@@ -54,6 +54,9 @@ export default {
       autoScrollTimer: null,
     };
   },
+  mounted() {
+    console.log(this.songData.lyrics);
+  },
   methods: {
     lyric(str) {
       if (str.indexOf('***') >= 0) {
@@ -259,6 +262,22 @@ export default {
         content: '🎸🎸🎸🎸🎸🎸🎸';
         margin-top: 0.8em;
         font-size: 2em;
+      }
+    }
+    &[data-type='separator'] {
+      padding: 0;
+      height: 40px;
+      position: relative;
+      &::after {
+        content: '';
+        display: block;
+        position: absolute;
+        width: 200px;
+        height: 2px;
+        background: rgba(255, 255, 255, 0.2);
+        left: 50%;
+        top: 50%;
+        transform: translateX(-50%) translateY(-50%);
       }
     }
   }

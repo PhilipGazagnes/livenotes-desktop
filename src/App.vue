@@ -25,7 +25,8 @@ import WaitScreen from './components/WaitScreen.vue';
 
 export default {
   songsData: songsDataJson,
-  listData: listDataJson.filter(s => s.scope.includes('funlive')).sort(compare), 
+  // listData: listDataJson.filter(s => s.scope.includes('funlive')).sort(compare), 
+  listData: listDataJson.sort(compare), 
   components: {
     SongList,
     SongDetail,
@@ -67,7 +68,11 @@ export default {
                 lyric,
               });
             }
-          })
+          });
+          acc.push({
+            type: 'separator',
+            lyric: '',
+          });
         }
         return acc;
       }, []);
