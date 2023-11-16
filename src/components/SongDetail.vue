@@ -28,9 +28,8 @@
         class="lyric"
         :data-display-mode="displayMode"
         :data-type="lyric.type"
-      >
-        {{ lyric.lyric }}
-      </div>
+        v-html="processLyric(lyric.lyric)"
+      />
     </div>
     <div class="tools">
       <button class="toolsButton" @click="fontSize(false)">-</button>
@@ -54,24 +53,13 @@ export default {
       autoScrollTimer: null,
     };
   },
-  mounted() {
-    console.log(this.songData.lyrics);
-  },
   methods: {
-    lyric(str) {
-      if (str.indexOf('***') >= 0) {
-        const spl = str.split('***');
-        if (spl.length > 1) {
-          return `<em>${spl[1]}</em>`;
-        }
-      }
-      if (str.indexOf('+++') >= 0) {
-        const spl = str.split('+++');
-        if (spl.length > 1) {
-          return `<i>${spl[1]}</i>`;
-        }
-      }
-      return str;
+    processLyric(str) {
+      let newstr = str.replace('{m{', '<span class="duo_man">');
+      newstr = newstr.replace('{l{', '<span class="duo_lady">');
+      newstr = newstr.replace('}}', '</span>');
+
+      return newstr;
     },
     fontSize(increase) {
       this.fontSizeUser += 0.1 * (increase ? 1 : -1);
@@ -286,6 +274,12 @@ export default {
   }
   &[data-type='italic'] {
     font-style: italic;
+  }
+  .duo_man {
+    border-bottom: 4px blue solid;
+  }
+  .duo_lady {
+    border-bottom: 3px red solid;
   }
 }
 </style>
